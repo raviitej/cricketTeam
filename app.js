@@ -4,10 +4,14 @@ const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 const app = express();
 app.use(express.json());
-const dbPath = path.join(__dirname, " cricketTeam.db ");
+const dbPath = path.join(__dirname, "cricketTeam.db");
+let db = null;
 const initializeDbServer = async () => {
   try {
-    const db = await open({ filename: dbPath, driver: sqlite3.Database });
+    db = await open({ filename: dbPath, driver: sqlite3.Database });
+    app.listen(3000, () => {
+      console.log("Server Running");
+    });
   } catch (e) {
     console.log(e.message);
     process.exit(1);
@@ -20,6 +24,7 @@ app.get("/players/", async (request, response) => {
   const teamData = await db.all(dbQuery);
   response.send(teamData);
 });
+
 // API2
 app.post("/players/", async (request, response) => {
   const playerDetails = request.body;
@@ -60,3 +65,4 @@ app.delete("/players/:playerId/", async (request, response) => {
   await db.run(deleteQuery);
   response.send("Player Removed");
 });
+module.exports = express;
